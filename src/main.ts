@@ -1,3 +1,4 @@
+global.crypto = require('crypto');
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -31,8 +32,8 @@ async function bootstrap() {
 
   const port = process.env.PORT || 3000;
   await app.listen(port);
-  console.log(`🚀 Application is running on: http://localhost:${port}`);
-  console.log(`📚 API Documentation: http://localhost:${port}/docs`);
+  console.log(`🚀 Application is running on: http://localhost:3030 (mapped from container port ${port})`);
+  console.log(`📚 API Documentation: http://localhost:3030/docs`);
 }
 
 bootstrap();

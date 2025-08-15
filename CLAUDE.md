@@ -42,24 +42,27 @@
 - Soft delete implementado
 - PostGIS para datos geoespaciales
 
-### Scripts importantes
+### Scripts importantes (Docker-First)
 ```bash
-# Desarrollo
-pnpm run start:dev
+# Levantar stack completo
+docker compose up -d
 
-# Migraciones  
-pnpm run migration:generate src/infrastructure/database/migrations/nombre
-pnpm run migration:run
+# Desarrollo (ver logs)
+docker compose logs -f api
+
+# Migraciones (dentro del contenedor)
+docker compose exec api pnpm run migration:generate src/infrastructure/database/migrations/nombre
+docker compose exec api pnpm run migration:run
 
 # Seeding (¡PEDIR CONFIRMACIÓN!)
-pnpm run seed
+docker compose exec api pnpm run seed
 
-# Testing
-pnpm run test:cov
-pnpm run test:load
+# Testing (dentro del contenedor)
+docker compose exec api pnpm run test:cov
+docker compose exec api pnpm run test:load
 
-# Docker
-docker compose up -d
+# Acceso al contenedor
+docker compose exec api bash
 ```
 
 ### Notas para Claude

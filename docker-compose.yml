@@ -72,7 +72,7 @@ services:
       - JWT_SECRET=super-secret-jwt-key-for-development
       - JWT_REFRESH_SECRET=super-secret-refresh-jwt-key-for-development
     ports:
-      - "3000:3000"
+      - "3030:3000"
     depends_on:
       postgres:
         condition: service_healthy

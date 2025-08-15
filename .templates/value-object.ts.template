@@ -1,0 +1,23 @@
+import { ValueObject } from '../value-object'; // Assuming a base class
+
+interface __VO_NAME__Props {
+  value: string; // or number, etc.
+}
+
+export class __VO_NAME__ extends ValueObject<__VO_NAME__Props> {
+  private constructor(props: __VO_NAME__Props) {
+    super(props);
+  }
+
+  public static create(value: string): __VO_NAME__ {
+    // TODO: Add validation logic here
+    if (value.length === 0) {
+      throw new Error('Value cannot be empty.');
+    }
+    return new __VO_NAME__({ value });
+  }
+
+  get value(): string {
+    return this.props.value;
+  }
+}

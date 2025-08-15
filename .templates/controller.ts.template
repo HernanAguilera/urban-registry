@@ -1,0 +1,18 @@
+import { Controller, Get, Post, Body, Param, Inject } from '@nestjs/common';
+import { __MODULE_NAME__Service } from './__MODULE_NAME_LOWERCASE__.service';
+import { Create__ENTITY_NAME__Dto } from './dto/create-__ENTITY_NAME_LOWERCASE__.dto';
+
+@Controller('__MODULE_NAME_LOWERCASE__')
+export class __MODULE_NAME__Controller {
+  constructor(private readonly __LOWERCASE_MODULE_NAME__Service: __MODULE_NAME__Service) {}
+
+  @Post()
+  create(@Body() createDto: Create__ENTITY_NAME__Dto) {
+    return this.__LOWERCASE_MODULE_NAME__Service.create(createDto);
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.__LOWERCASE_MODULE_NAME__Service.findOne(id);
+  }
+}

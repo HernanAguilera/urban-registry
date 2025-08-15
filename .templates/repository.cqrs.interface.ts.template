@@ -1,0 +1,15 @@
+import { __ENTITY_NAME__ } from '../entities/__LOWERCASE_ENTITY_NAME__.entity';
+import { __ENTITY_NAME__Dto } from '../../modules/__LOWERCASE_ENTITY_NAME__/dto/__LOWERCASE_ENTITY_NAME__.dto';
+
+export const I__ENTITY_NAME__CommandRepository = Symbol('I__ENTITY_NAME__CommandRepository');
+export interface I__ENTITY_NAME__CommandRepository {
+  save(entity: __ENTITY_NAME__): Promise<void>;
+  // update(entity: __ENTITY_NAME__): Promise<void>;
+  // delete(id: string): Promise<void>;
+}
+
+export const I__ENTITY_NAME__QueryRepository = Symbol('I__ENTITY_NAME__QueryRepository');
+export interface I__ENTITY_NAME__QueryRepository {
+  findById(id: string): Promise<__ENTITY_NAME__Dto | null>;
+  findAll(): Promise<__ENTITY_NAME__Dto[]>;
+}

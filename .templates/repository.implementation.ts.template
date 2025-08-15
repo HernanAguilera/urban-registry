@@ -1,0 +1,35 @@
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { I__ENTITY_NAME__CommandRepository, I__ENTITY_NAME__QueryRepository } from '../../../core/interfaces/__LOWERCASE_ENTITY_NAME__.repository.interface';
+import { __ENTITY_NAME__ } from '../../../core/entities/__LOWERCASE_ENTITY_NAME__.entity';
+import { __ENTITY_NAME__Schema } from '../schemas/__LOWERCASE_ENTITY_NAME__.schema'; // Assuming TypeORM schema is separate
+import { __ENTITY_NAME__Dto } from '../../../modules/__LOWERCASE_ENTITY_NAME__/dto/__LOWERCASE_ENTITY_NAME__.dto';
+
+@Injectable()
+export class __ENTITY_NAME__Repository implements I__ENTITY_NAME__CommandRepository, I__ENTITY_NAME__QueryRepository {
+  constructor(
+    @InjectRepository(__ENTITY_NAME__Schema)
+    private readonly ormRepository: Repository<__ENTITY_NAME__>,
+  ) {}
+
+  // COMMANDS
+  async save(entity: __ENTITY_NAME__): Promise<void> {
+    // TODO: Map domain entity to persistence schema/entity
+    await this.ormRepository.save(entity);
+  }
+
+  // QUERIES
+  async findById(id: string): Promise<__ENTITY_NAME__Dto | null> {
+    const entity = await this.ormRepository.findOneBy({ id });
+    if (!entity) return null;
+    // TODO: Map persistence entity to DTO
+    return entity as __ENTITY_NAME__Dto;
+  }
+
+  async findAll(): Promise<__ENTITY_NAME__Dto[]> {
+    const entities = await this.ormRepository.find();
+    // TODO: Map persistence entities to DTOs
+    return entities as __ENTITY_NAME__Dto[];
+  }
+}

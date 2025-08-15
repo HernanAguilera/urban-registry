@@ -1,0 +1,24 @@
+import { AggregateRoot } from '@nestjs/cqrs';
+
+// Using AggregateRoot from NestJS CQRS is a good practice for event-driven patterns
+export class __ENTITY_NAME__ extends AggregateRoot {
+  private readonly _id: string;
+  // TODO: Add other properties as private fields
+
+  constructor(id: string /*, other properties */) {
+    super();
+    this._id = id;
+  }
+
+  get id(): string {
+    return this._id;
+  }
+
+  // TODO: Add domain logic methods here
+  // Example: public updateAddress(newAddress: Address) { ... }
+
+  // Example of publishing a domain event
+  // public someBusinessAction() {
+  //   this.apply(new SomeBusinessActionEvent(this.id));
+  // }
+}

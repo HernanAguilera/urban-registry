@@ -1,0 +1,10 @@
+import { IsString, IsNotEmpty, MaxLength } from 'class-validator';
+
+export class Create__ENTITY_NAME__Dto {
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(100)
+  readonly name: string;
+
+  // TODO: Add other properties for the DTO
+}

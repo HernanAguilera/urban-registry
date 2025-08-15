@@ -1,0 +1,24 @@
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { __MODULE_NAME__Service } from './__LOWERCASE_MODULE_NAME__.service';
+import { __MODULE_NAME__Controller } from './__LOWERCASE_MODULE_NAME__.controller';
+import { __ENTITY_NAME__Repository } from '../../infrastructure/database/repositories/__LOWERCASE_ENTITY_NAME__.repository';
+import { I__ENTITY_NAME__CommandRepository, I__ENTITY_NAME__QueryRepository } from '../../core/interfaces/__LOWERCASE_ENTITY_NAME__.repository.interface';
+import { __ENTITY_NAME__Schema } from '../../infrastructure/database/schemas/__LOWERCASE_ENTITY_NAME__.schema';
+
+@Module({
+  imports: [TypeOrmModule.forFeature([__ENTITY_NAME__Schema])],
+  controllers: [__MODULE_NAME__Controller],
+  providers: [
+    __MODULE_NAME__Service,
+    {
+      provide: I__ENTITY_NAME__CommandRepository,
+      useClass: __ENTITY_NAME__Repository,
+    },
+    {
+      provide: I__ENTITY_NAME__QueryRepository,
+      useClass: __ENTITY_NAME__Repository,
+    },
+  ],
+})
+export class __MODULE_NAME__Module {}

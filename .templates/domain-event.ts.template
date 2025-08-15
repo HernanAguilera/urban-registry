@@ -1,0 +1,10 @@
+// This is a marker interface
+export interface IDomainEvent {}
+
+export class __EVENT_NAME__Event implements IDomainEvent {
+  public readonly occurredOn: Date;
+
+  constructor(public readonly aggregateId: string /*, other event data */) {
+    this.occurredOn = new Date();
+  }
+}

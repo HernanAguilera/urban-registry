@@ -1,0 +1,34 @@
+import { Test, TestingModule } from '@nestjs/testing';
+import { __MODULE_NAME__Service } from './__MODULE_NAME_LOWERCASE__.service';
+import { I__ENTITY_NAME__Repository } from '../../core/__MODULE_NAME_PLURAL__/repository/__ENTITY_NAME_LOWERCASE__.repository.interface';
+
+describe('__MODULE_NAME__Service', () => {
+  let service: __MODULE_NAME__Service;
+  let repository: I__ENTITY_NAME__Repository;
+
+  const mockRepository = {
+    findById: jest.fn(),
+    save: jest.fn(),
+  };
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        __MODULE_NAME__Service,
+        {
+          provide: I__ENTITY_NAME__Repository,
+          useValue: mockRepository,
+        },
+      ],
+    }).compile();
+
+    service = module.get<__MODULE_NAME__Service>(__MODULE_NAME__Service);
+    repository = module.get<I__ENTITY_NAME__Repository>(I__ENTITY_NAME__Repository);
+  });
+
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+  });
+
+  // TODO: Add more tests for each service method
+});

@@ -1,0 +1,29 @@
+import { Inject, Injectable } from '@nestjs/common';
+import { I__ENTITY_NAME__CommandRepository, I__ENTITY_NAME__QueryRepository } from '../../core/interfaces/__LOWERCASE_ENTITY_NAME__.repository.interface';
+import { Create__ENTITY_NAME__Dto } from './dto/create-__LOWERCASE_ENTITY_NAME__.dto';
+import { __ENTITY_NAME__Dto } from './dto/__LOWERCASE_ENTITY_NAME__.dto';
+import { __ENTITY_NAME__ } from '../../core/entities/__LOWERCASE_ENTITY_NAME__.entity';
+import { randomUUID } from 'crypto';
+
+@Injectable()
+export class __MODULE_NAME__Service {
+  constructor(
+    @Inject(I__ENTITY_NAME__CommandRepository)
+    private readonly commandRepository: I__ENTITY_NAME__CommandRepository,
+    @Inject(I__ENTITY_NAME__QueryRepository)
+    private readonly queryRepository: I__ENTITY_NAME__QueryRepository,
+  ) {}
+
+  // Use Case for Creating an entity
+  async create(createDto: Create__ENTITY_NAME__Dto): Promise<string> {
+    const newEntity = new __ENTITY_NAME__(randomUUID() /*, ...dto properties */);
+    // newEntity.someDomainLogic();
+    await this.commandRepository.save(newEntity);
+    return newEntity.id;
+  }
+
+  // Use Case for finding an entity
+  async findOne(id: string): Promise<__ENTITY_NAME__Dto | null> {
+    return this.queryRepository.findById(id);
+  }
+}

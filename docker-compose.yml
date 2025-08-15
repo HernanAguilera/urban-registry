@@ -1,0 +1,91 @@
+services:
+  # PostgreSQL with PostGIS
+  postgres:
+    image: postgis/postgis:15-3.3
+    container_name: redatlas-postgres
+    environment:
+      POSTGRES_DB: redatlas
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infrastructure/database/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis
+  redis:
+    image: redis:7-alpine
+    container_name: redatlas-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # RabbitMQ (for async processing)
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: redatlas-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"  # Management UI
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "node_health_check"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # API Application
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: redatlas-api
+    environment:
+      - NODE_ENV=development
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=redatlas
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - QUEUE_HOST=rabbitmq
+      - QUEUE_PORT=5672
+      - QUEUE_USERNAME=guest
+      - QUEUE_PASSWORD=guest
+      - JWT_SECRET=super-secret-jwt-key-for-development
+      - JWT_REFRESH_SECRET=super-secret-refresh-jwt-key-for-development
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: ["pnpm", "run", "start:dev"]
+
+volumes:
+  postgres_data:
+  redis_data:
+  rabbitmq_data:

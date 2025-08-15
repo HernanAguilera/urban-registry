@@ -52,6 +52,21 @@ npm run test:load  # Validación de SLOs
 
 ---
 
+## 🔧 Decisiones Técnicas
+
+### Package Manager: pnpm
+
+**Justificación:** Hemos seleccionado pnpm sobre npm por las siguientes razones técnicas:
+
+- **Performance**: ~2x más rápido en instalaciones gracias a algoritmo de resolución optimizado
+- **Eficiencia de espacio**: Symlinks evitan duplicación de dependencies (reducción ~70% disco)
+- **Strict dependency resolution**: Previene phantom dependencies que causan errores en producción
+- **Deterministic installs**: Garantiza reproducibilidad entre entornos (dev/staging/prod)
+- **Monorepo ready**: Soporte nativo para workspaces, crucial para escalabilidad futura
+- **Backward compatibility**: 100% compatible con npm scripts y ecosystem
+
+---
+
 Cuando lo tengas listo, por favor responde al correo con:
 1.  Link a tu repositorio (público o privado con acceso para nosotros).
 2.  Instrucciones claras de instalación y ejecución (incluidas en este README).

@@ -105,7 +105,7 @@ export class PropertiesService {
 
     // Determine cursors
     const nextCursor = hasNext ? properties[properties.length - 1]?.id : undefined;
-    const prevCursor = cursor; // In real implementation, you'd calculate this properly
+    const prevCursor = properties.length > 0 ? properties[0].id : undefined;
 
     // Transform to DTOs
     const data: PropertySummaryDto[] = properties.map(property => ({

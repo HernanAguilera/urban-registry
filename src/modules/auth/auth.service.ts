@@ -59,9 +59,8 @@ export class AuthService {
         secret: this.configService.get<string>('JWT_REFRESH_SECRET') || 'refresh-secret',
       });
 
-      // Check if refresh token exists and is not revoked
-      const tokenHash = await bcrypt.hash(refreshTokenDto.refreshToken, 10);
-      const storedToken = await this.refreshTokenRepository.findOne({
+      // Get all non-revoked tokens for this user
+      const storedTokens = await this.refreshTokenRepository.find({
         where: {
           userId: payload.sub,
           revoked: false,
@@ -69,15 +68,33 @@ export class AuthService {
         relations: ['user'],
       });
 
-      if (!storedToken || storedToken.expiresAt < new Date()) {
+      if (!storedTokens.length) {
+        throw new UnauthorizedException('No valid refresh tokens found');
+      }
+
+      // Find the token that matches the provided refresh token
+      let validToken = null;
+      for (const storedToken of storedTokens) {
+        const isValidToken = await bcrypt.compare(
+          refreshTokenDto.refreshToken,
+          storedToken.tokenHash,
+        );
+        
+        if (isValidToken) {
+          validToken = storedToken;
+          break;
+        }
+      }
+
+      if (!validToken || validToken.expiresAt < new Date()) {
         throw new UnauthorizedException('Invalid or expired refresh token');
       }
 
-      // Revoke old refresh token (token rotation)
-      await this.revokeRefreshToken(storedToken.id);
+      // Revoke the used refresh token (token rotation)
+      await this.revokeRefreshToken(validToken.id);
 
       // Generate new tokens
-      return this.generateTokens(storedToken.user);
+      return this.generateTokens(validToken.user);
     } catch (error) {
       this.logger.error(`Error refreshing token: ${error.message}`);
       throw new UnauthorizedException('Invalid refresh token');

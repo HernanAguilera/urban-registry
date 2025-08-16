@@ -20,8 +20,14 @@ export class TenantGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const user = request.user;
 
-    if (!user || !user.tenantId) {
-      throw new ForbiddenException('User tenant information is required');
+    if (
+      !user ||
+      user.tenantId === undefined ||
+      user.tenantId === null ||
+      (typeof user.tenantId === 'string' && user.tenantId.trim() === '') ||
+      (typeof user.tenantId === 'number' && isNaN(user.tenantId))
+    ) {
+      throw new ForbiddenException('Valid user tenantId is required');
     }
 
     // Add tenantId to request for easy access in controllers/services

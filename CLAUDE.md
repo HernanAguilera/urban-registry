@@ -5,12 +5,12 @@
 **IMPORTANTE**: Antes de ejecutar cualquier comando que pueda consumir recursos significativos o afectar el sistema, SIEMPRE ofrecer al usuario ejecutarlo él mismo, a menos que haya pedido explícitamente que lo ejecute Claude.
 
 ### Comandos que requieren confirmación del usuario:
-- `pnpm run seed` - Script de seeding (puede consumir muchos tokens)
+- `npm run seed` - Script de seeding (puede consumir muchos tokens)
 - `docker compose up/down` - Operaciones de Docker
-- `npm/pnpm install` - Instalación de dependencias
-- `pnpm run build` - Compilación del proyecto
-- `pnpm run test` - Ejecución de tests
-- `pnpm run migration:run` - Aplicar migraciones
+- `npm install` - Instalación de dependencias
+- `npm run build` - Compilación del proyecto
+- `npm run test` - Ejecución de tests
+- `npm run migration:run` - Aplicar migraciones
 - Cualquier comando que modifique archivos del sistema
 - Comandos de larga duración o que consuman recursos
 
@@ -32,7 +32,7 @@
 - **Base de datos**: PostgreSQL 15 + PostGIS
 - **Cache**: Redis
 - **Queue**: RabbitMQ
-- **Package Manager**: pnpm (justificado en README.md)
+- **Package Manager**: npm (dentro del contenedor)
 - **ORM**: TypeORM con migraciones
 
 ### Arquitectura
@@ -51,15 +51,15 @@ docker compose up -d
 docker compose logs -f api
 
 # Migraciones (dentro del contenedor)
-docker compose exec api pnpm run migration:generate src/infrastructure/database/migrations/nombre
-docker compose exec api pnpm run migration:run
+docker compose exec api npm run migration:generate src/infrastructure/database/migrations/nombre
+docker compose exec api npm run migration:run
 
 # Seeding (¡PEDIR CONFIRMACIÓN!)
-docker compose exec api pnpm run seed
+docker compose exec api npm run seed
 
 # Testing (dentro del contenedor)
-docker compose exec api pnpm run test:cov
-docker compose exec api pnpm run test:load
+docker compose exec api npm run test:cov
+docker compose exec api npm run test:load
 
 # Acceso al contenedor
 docker compose exec api bash

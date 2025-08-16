@@ -15,7 +15,7 @@ export class DataGenerator {
   static generateUser(tenantId?: string) {
     return {
       id: faker.string.uuid(),
-      email: faker.internet.email().toLowerCase(),
+      email: faker.internet.userName().toLowerCase() + '.' + faker.string.uuid() + '@' + faker.internet.domainName(),
       password: '$2b$10$K7L/gT1lpOGRqXGJ5QzF8uNVGCzPu4bvKDFZqDyD8HLaW9kCNk6YG', // bcrypt hash of 'password123'
       firstName: faker.person.firstName(),
       lastName: faker.person.lastName(),

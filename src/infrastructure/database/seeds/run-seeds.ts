@@ -10,6 +10,7 @@ const TARGET_TRANSACTIONS = 150000;
 
 async function runSeeds() {
   console.log('🌱 Starting database seeding...');
+  const startTime = Date.now();
   console.log(`📊 Target: ${TARGET_USERS.toLocaleString()} users, ${TARGET_PROPERTIES.toLocaleString()} properties, ${TARGET_LISTINGS.toLocaleString()} listings, ${TARGET_TRANSACTIONS.toLocaleString()} transactions`);
   
   try {
@@ -130,7 +131,7 @@ async function runSeeds() {
     console.log(`✅ Transactions seeded in ${((Date.now() - startTransactionsTime) / 1000).toFixed(1)}s`);
 
     // === SUMMARY ===
-    const totalTime = (Date.now() - Date.now() + Date.now()) / 1000;
+    const totalTime = (Date.now() - startTime) / 1000;
     console.log('\n🎉 Seeding completed successfully!');
     console.log(`📊 Final counts:`);
     console.log(`   👥 Users: ${(await userRepository.count()).toLocaleString()}`);

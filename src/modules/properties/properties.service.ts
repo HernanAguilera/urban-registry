@@ -70,12 +70,12 @@ export class PropertiesService {
     if (cursor) {
       const cursorProperty = await this.propertyRepository.findOne({
         where: { id: cursor, tenantId },
-        select: ['id', sortBy as keyof Property],
+        select: ['id', 'price', 'createdAt', 'area', 'title'],
       });
 
       if (cursorProperty) {
         const operator = sortOrder === 'ASC' ? '>' : '<';
-        const cursorValue = cursorProperty[sortBy as keyof Property];
+        const cursorValue = cursorProperty[this.getPropertyField(sortBy)];
         
         queryBuilder.andWhere(
           `(${sortField} ${operator} :cursorValue OR (${sortField} = :cursorValue AND property.id ${operator} :cursorId))`,
@@ -212,4 +212,16 @@ export class PropertiesService {
 
     return fieldMapping[sortBy] || fieldMapping[SortBy.CREATED_AT];
   }
+
+  private getPropertyField(sortBy: SortBy): keyof Property {
+    const fieldMapping: Record<SortBy, keyof Property> = {
+      [SortBy.PRICE]: 'price',
+      [SortBy.CREATED_AT]: 'createdAt',
+      [SortBy.AREA]: 'area',
+      [SortBy.TITLE]: 'title',
+    };
+
+    return fieldMapping[sortBy] || fieldMapping[SortBy.CREATED_AT];
+  }
+
 }

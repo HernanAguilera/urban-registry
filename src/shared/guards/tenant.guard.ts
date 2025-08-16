@@ -24,8 +24,7 @@ export class TenantGuard implements CanActivate {
       !user ||
       user.tenantId === undefined ||
       user.tenantId === null ||
-      (typeof user.tenantId === 'string' && user.tenantId.trim() === '') ||
-      (typeof user.tenantId === 'number' && isNaN(user.tenantId))
+      (typeof user.tenantId === 'string' && user.tenantId.trim() === '')
     ) {
       throw new ForbiddenException('Valid user tenantId is required');
     }

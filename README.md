@@ -41,14 +41,62 @@ Día 1: 🏗️ Foundation & Setup  →  Día 2: 🔐 Auth & Search  →  Día 3
 - **Setup Validation**: `docker-compose up` → stack completo funcionando en <5min
 - **API Documentation**: Swagger UI disponible en `/docs` con 100% endpoints documentados
 
+## 🚀 Instalación y Ejecución
+
+**Requisitos previos:**
+- Docker y Docker Compose instalados
+- Git
+
+**Setup completo desde cero:**
+```bash
+git clone <repo> && cd redatlas-backend
+docker compose up -d
+```
+
 **Comandos de Validación:**
 ```bash
-# Setup completo desde cero
-git clone <repo> && cd redatlas-backend
-docker-compose up -d
-npm run test:cov
-npm run test:load  # Validación de SLOs
+# Ejecutar tests (dentro del contenedor)
+docker compose exec api pnpm run test:cov
+
+# Validación de SLOs de performance
+docker compose exec api pnpm run test:load
+
+# Ver logs en tiempo real
+docker compose logs -f api
+
+# Acceder al contenedor para debugging
+docker compose exec api bash
 ```
+
+**URLs importantes:**
+- **API**: http://localhost:3030
+- **Swagger Docs**: http://localhost:3030/docs
+- **RabbitMQ Management**: http://localhost:15672 (guest/guest)
+
+---
+
+## 🔧 Decisiones Técnicas
+
+### Arquitectura Docker-First
+
+**Enfoque:** Todo el desarrollo y ejecución se realiza dentro de contenedores Docker para garantizar:
+
+- **Consistencia de entorno**: Mismas versiones de Node.js, PostgreSQL, Redis entre desarrolladores
+- **Aislamiento de dependencias**: No conflictos con versiones locales instaladas
+- **Reproducibilidad**: El entorno de desarrollo es idéntico al de producción
+- **Setup simplificado**: Un solo comando `docker compose up -d` para levantar todo el stack
+
+**Importante:** Todos los comandos de desarrollo (`pnpm`, `npm`, tests, migraciones) deben ejecutarse dentro del contenedor usando `docker compose exec api <comando>`.
+
+### Package Manager: pnpm
+
+**Justificación:** Seleccionado sobre npm por ventajas técnicas:
+
+- **Performance**: ~2x más rápido en instalaciones
+- **Eficiencia de espacio**: Symlinks evitan duplicación (reducción ~70% disco)
+- **Strict dependency resolution**: Previene phantom dependencies
+- **Deterministic installs**: Garantiza reproducibilidad entre entornos
+- **Monorepo ready**: Soporte nativo para workspaces
 
 ---
 

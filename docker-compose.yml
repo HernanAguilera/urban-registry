@@ -85,6 +85,38 @@ services:
       - /app/node_modules
     command: ["npm", "run", "start:dev"]
 
+  # CSV Import Consumer
+  consumer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: redatlas-consumer
+    environment:
+      - NODE_ENV=development
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=redatlas
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - QUEUE_HOST=rabbitmq
+      - QUEUE_PORT=5672
+      - QUEUE_USERNAME=guest
+      - QUEUE_PASSWORD=guest
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: ["npm", "run", "consumer"]
+    restart: unless-stopped
+
 volumes:
   postgres_data:
   redis_data:

@@ -34,6 +34,9 @@ export class Property {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ nullable: false })
+  external_id: string;
+
   @Column()
   title: string;
 
@@ -89,6 +92,14 @@ export class Property {
 
   @Column({ name: 'owner_id' })
   ownerId: string;
+
+  @Column('jsonb', { nullable: true })
+  metadata: {
+    csvBatch?: string;
+    source?: string;
+    lastCsvUpdate?: Date;
+    importHistory?: number;
+  };
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

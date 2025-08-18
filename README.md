@@ -51,6 +51,10 @@ Día 1: 🏗️ Foundation & Setup  →  Día 2: 🔐 Auth & Search  →  Día 3
 ```bash
 git clone <repo> && cd redatlas-backend
 docker compose up -d
+
+# Esperar a que todos los servicios estén listos, luego:
+docker compose exec api npm run migration:run
+docker compose exec api npm run seed
 ```
 
 **Comandos de Validación:**
@@ -72,6 +76,49 @@ docker compose exec api bash
 - **API**: http://localhost:3030
 - **Swagger Docs**: http://localhost:3030/docs
 - **RabbitMQ Management**: http://localhost:15672 (guest/guest)
+
+## 📦 Estrategia de Invalidación de Cache
+
+### Política de Cache
+- **Llaves compuestas**: Cada consulta genera una key basada en parámetros serializados (JSON hasheado)
+- **TTL**: Sin expiración automática, invalidación manual por eventos
+- **Patrón**: `properties:{hash_de_parametros}`
+
+### Invalidación Automática
+El sistema invalida automáticamente el cache en las siguientes operaciones:
+
+**Operaciones que invalidan**:
+- `DELETE /properties/:id` - Elimina todo cache `properties:*`
+- `POST /imports` - Elimina cache después de procesar CSV
+- Futuras operaciones CUD (CREATE, UPDATE)
+
+**Implementación**:
+- Interceptor global `CacheInvalidationInterceptor`
+- Decorador `@CacheInvalidate` en controladores
+- Patrón de invalidación: `properties:*` (todos los cache de propiedades)
+
+**Justificación**:
+- **Consistencia**: Evita datos stale entre cache y DB
+- **Simplicidad**: Fácil mantenimiento vs. invalidación granular
+- **Performance**: Cache se recrea solo cuando es necesario
+
+### Monitoreo de Cache
+```bash
+# Ver cache actual
+docker compose exec redis redis-cli KEYS "properties:*"
+
+# Limpiar cache manualmente
+docker compose exec redis redis-cli FLUSHDB
+```
+
+## 🧪 Testing Manual
+
+Para probar todas las funcionalidades implementadas, consulta la **[Guía de Testing Manual](docs/testing-manual.md)** que incluye:
+
+- ✅ Credenciales de prueba (admin@test.com / user@test.com)
+- ✅ Setup inicial de base de datos (migraciones → seeding)
+- ✅ Comandos curl para todas las funcionalidades
+- ✅ Verificación de cache, búsqueda geoespacial e import CSV
 
 ---
 
@@ -97,6 +144,24 @@ docker compose exec api bash
 - **Strict dependency resolution**: Previene phantom dependencies
 - **Deterministic installs**: Garantiza reproducibilidad entre entornos
 - **Monorepo ready**: Soporte nativo para workspaces
+
+### CSV Import con External ID para UPSERT
+
+**Problema identificado:** Los datos scraped de sitios inmobiliarios contienen direcciones susceptibles a errores de tipeo y inconsistencias de formato, haciendo que la dirección no sea un identificador único confiable.
+
+**Solución implementada:** Campo `external_id` en el modelo Property para operaciones UPSERT confiables.
+
+**Justificación técnica:**
+- **Confiabilidad**: external_id generado por el sistema ETL es consistente
+- **UPSERT seguro**: Permite actualizar propiedades existentes sin crear duplicados
+- **Trazabilidad**: Mantiene referencia al origen del dato en el sistema fuente
+- **Escalabilidad**: Facilita sincronización con múltiples fuentes de datos
+
+**Implementación:**
+- Campo `external_id` nullable en Property entity (para compatibilidad con datos existentes)
+- Validación obligatoria en CSV import (external_id requerido)
+- Lógica UPSERT: INSERT si no existe, UPDATE si ya existe por external_id + tenantId
+- Documentación actualizada con nuevo formato CSV incluyendo external_id
 
 ---
 

@@ -19,7 +19,7 @@ export class PropertyFiltersDto {
   @ApiProperty({
     description: 'Property sector/neighborhood',
     required: false,
-    example: 'Centro',
+    example: 'Palermo',
   })
   @IsOptional()
   @IsString()
@@ -48,7 +48,7 @@ export class PropertyFiltersDto {
   @ApiProperty({
     description: 'Minimum price',
     required: false,
-    example: 100000,
+    example: 80000,
     minimum: 0,
   })
   @IsOptional()
@@ -60,7 +60,7 @@ export class PropertyFiltersDto {
   @ApiProperty({
     description: 'Maximum price',
     required: false,
-    example: 500000,
+    example: 800000,
     minimum: 0,
   })
   @IsOptional()
@@ -72,7 +72,7 @@ export class PropertyFiltersDto {
   @ApiProperty({
     description: 'Minimum area in square meters',
     required: false,
-    example: 50,
+    example: 40,
     minimum: 0,
   })
   @IsOptional()
@@ -84,7 +84,7 @@ export class PropertyFiltersDto {
   @ApiProperty({
     description: 'Maximum area in square meters',
     required: false,
-    example: 200,
+    example: 300,
     minimum: 0,
   })
   @IsOptional()
@@ -96,7 +96,7 @@ export class PropertyFiltersDto {
   @ApiProperty({
     description: 'Minimum number of bedrooms',
     required: false,
-    example: 2,
+    example: 1,
     minimum: 0,
   })
   @IsOptional()
@@ -154,9 +154,52 @@ export class PropertyFiltersDto {
   @ApiProperty({
     description: 'Cursor for pagination (property ID)',
     required: false,
-    example: 'uuid-string',
+    example: '123e4567-e89b-12d3-a456-426614174000',
   })
   @IsOptional()
   @IsString()
   cursor?: string;
+
+  // Geospatial filters
+  @ApiProperty({
+    description: 'Latitude for geospatial search (Buenos Aires coords)',
+    required: false,
+    example: -34.6037,
+    minimum: -90,
+    maximum: 90,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(-90)
+  @Max(90)
+  lat?: number;
+
+  @ApiProperty({
+    description: 'Longitude for geospatial search (Buenos Aires coords)',
+    required: false,
+    example: -58.3816,
+    minimum: -180,
+    maximum: 180,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(-180)
+  @Max(180)
+  lon?: number;
+
+  @ApiProperty({
+    description: 'Search radius in kilometers',
+    required: false,
+    example: 10,
+    minimum: 0.1,
+    maximum: 100,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0.1)
+  @Max(100)
+  radius?: number;
 }

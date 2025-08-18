@@ -1,10 +1,14 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { PropertiesModule } from './modules/properties/properties.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
+import { ImportsModule } from './modules/imports/imports.module';
 import { CacheModule } from './infrastructure/cache';
+import { QueueModule } from './infrastructure/queue';
+import { CacheInvalidationInterceptor } from './infrastructure/cache/cache-invalidation.interceptor';
 import { User, Property, Listing, Transaction, RefreshToken } from './core/entities';
 
 @Module({
@@ -30,9 +34,17 @@ import { User, Property, Listing, Transaction, RefreshToken } from './core/entit
       inject: [ConfigService],
     }),
     CacheModule,
+    QueueModule,
     PropertiesModule,
     AuthModule,
     UsersModule,
+    ImportsModule,
+  ],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: CacheInvalidationInterceptor,
+    },
   ],
 })
 export class AppModule {}
